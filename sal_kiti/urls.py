@@ -11,7 +11,7 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
 from results.routers import router
-from results.views.statistics import statistics_pohjolan_malja
+from results.views.statistics import statistics_pohjolan_malja, statistics_sjal_ranking
 from results.views.users import current_user
 
 
@@ -30,6 +30,7 @@ admin.site.index_title = _('Kiti administration')
 
 urlpatterns = [
     path('api/sal/pohjolanmalja/<int:year>/', statistics_pohjolan_malja, name='sal-pohjolan-malja'),
+    path('api/sjal/ranking/<str:division>/', statistics_sjal_ranking, name='sjal-ranking'),
     path('api/users/current/', current_user, name='current-user'),
     path('api/', include(router.urls)),
     path('admin/', admin.site.urls),
