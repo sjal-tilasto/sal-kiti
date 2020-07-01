@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'drf_yasg',
     'django_filters',
+    'divari'
 ]
 
 MIDDLEWARE = [

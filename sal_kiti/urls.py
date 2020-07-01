@@ -10,6 +10,9 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
+from divari.routers import router as divari_router
+from divari.views import CalculateSeason
+
 from results.routers import router
 from results.views.statistics import statistics_pohjolan_malja, statistics_sjal_ranking
 from results.views.users import current_user
@@ -33,6 +36,8 @@ urlpatterns = [
     path('api/sjal/ranking/<str:division>/', statistics_sjal_ranking, name='sjal-ranking'),
     path('api/users/current/', current_user, name='current-user'),
     path('api/', include(router.urls)),
+    path('api/divari/calculate', CalculateSeason.as_view()),
+    path('api/divari/', include(divari_router.urls)),
     path('admin/', admin.site.urls),
     path('auth/', include('django.contrib.auth.urls')),
     path('docs/', include_docs_urls(title="SAL Kiti", description="SAL Kiti")),
