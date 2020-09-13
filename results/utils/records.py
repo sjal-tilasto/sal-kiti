@@ -89,10 +89,14 @@ def get_categories(result, partial=None):
         categories = categories.filter(
             Q(max_age=None) | Q(max_age__gte=max_age)
         )
+    else:
+        categories = categories.filter(max_age=None)
     if min_age is not None:
         categories = categories.filter(
             Q(min_age=None) | Q(min_age__lte=min_age)
         )
+    else:
+        categories = categories.filter(min_age=None)
     if result.team:
         categories = categories.filter(
             Q(team_size=None) | Q(team_size=result.team_members.count())
@@ -279,7 +283,7 @@ def check_records_partial(partial):
                 else:
                     if not Record.objects.filter(Q(partial_result__value__gte=partial.value,
                                                    date_start__lt=partial.result.competition.date_start) |
-                                                 Q(partial_result__value=partial.value,
+                                                 Q(partial_result__value__gt=partial.value,
                                                    date_start=partial.result.competition.date_start),
                                                  level=record_level, type=partial.result.competition.type,
                                                  date_end=None, partial_result__type=partial.type, historical=False,
