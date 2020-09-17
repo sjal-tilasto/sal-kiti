@@ -240,6 +240,10 @@ class ResultList(mixins.ListModelMixin, viewsets.GenericViewSet):
             if not external:
                 queryset = queryset.exclude(organization__external=True)
 
+            gender = self.request.query_params.get('gender', None)
+            if gender:
+                queryset = queryset.filter(athlete__gender=gender)
+
         except ValueError:
             raise exceptions.ParseError()
 
