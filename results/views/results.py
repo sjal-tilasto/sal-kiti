@@ -160,10 +160,13 @@ class ResultList(mixins.ListModelMixin, viewsets.GenericViewSet):
         Build a raw query for grouping results with inner query.
         """
         raw_query = str(queryset.query)
+        print(raw_query)
         if 'WHERE' in raw_query:
             where_query = ' WHERE' + raw_query.split('WHERE')[1].split(' ORDER BY')[0]
             for match in re.findall(r' \d{4}-\d{2}-\d{2}', raw_query):
                 where_query = where_query.replace(match, ' "' + match.strip() + '"')
+            where_query = where_query.replace(' M ', ' "M" ')
+            where_query = where_query.replace(' W ', ' "W" ')
             joins = re.split('FROM .results_result.', raw_query)[1].split('WHERE')[0]
         else:
             where_query = ''
@@ -175,6 +178,7 @@ class ResultList(mixins.ListModelMixin, viewsets.GenericViewSet):
         query_end = (') `results_result` WHERE `rn` <= %s GROUP BY `results_result`.`athlete_id` '
                      'ORDER BY SUM(`result`) DESC')
         raw_query = first_select + 'FROM (' + second_select + 'FROM `results_result`' + joins + where_query + query_end
+        print(raw_query)
         return raw_query
 
     def get_queryset(self):
@@ -241,7 +245,7 @@ class ResultList(mixins.ListModelMixin, viewsets.GenericViewSet):
                 queryset = queryset.exclude(organization__external=True)
 
             gender = self.request.query_params.get('gender', None)
-            if gender:
+            if gender and gender in ['M', 'W']:
                 queryset = queryset.filter(athlete__gender=gender)
 
         except ValueError:
