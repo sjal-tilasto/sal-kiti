@@ -198,6 +198,7 @@ def statistics_sjal_ranking(request, division):
     }
     """
     categories_recurve_outdoor = ['Y', 'N', '20', 'N20']
+    categories_barebow_1440 = ['YV', 'YLB', 'YI', 'NV', 'NLB']
     competition_types_indoor = ['18m', '25m']
     try:
         date_start = datetime.strptime(request.GET.get('date_start', None), '%Y-%m-%d').date()
@@ -236,8 +237,9 @@ def statistics_sjal_ranking(request, division):
             n += 1
             result_total = result_total + result.result
         elif result.competition.type.abbreviation == '1440' and n1440 < 1:
-            if division == 'compound' or (division == 'recurve' and
-                                          result.category.abbreviation in categories_recurve_outdoor):
+            if (division == 'compound' or
+                    (division == 'recurve' and result.category.abbreviation in categories_recurve_outdoor) or
+                    (division == 'barebow' and result.category.abbreviation in categories_barebow_1440)):
                 n1440 += 1
                 n += 1
                 result_1440 = result.result // 2
