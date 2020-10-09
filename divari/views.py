@@ -1,6 +1,8 @@
 from django_filters import rest_framework as filters
 from django.http import JsonResponse
 
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from dry_rest_permissions.generics import DRYPermissions
 from rest_framework import viewsets
 from rest_framework.exceptions import ValidationError
@@ -8,8 +10,9 @@ from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
-from divari.models import Competition, Result, Season, SeasonResult
+from divari.models import Competition, Result, Season, SeasonResult, Team
 from divari.serializers import CompetitionSerializer, ResultSerializer, SeasonSerializer, SeasonResultSerializer
+from divari.serializers import TeamSerializer
 from divari.utils import calculate_season_results
 
 from results.utils.pagination import CustomPagePagination
@@ -144,8 +147,41 @@ class SeasonResultViewSet(viewsets.ModelViewSet):
     filterset_fields = ['team__season', 'team__bow_type']
 
 
+class TeamViewSet(viewsets.ModelViewSet):
+    """API endpoint for divari teams.
+
+    list:
+    Returns a list of all the existing teams.
+
+    retrieve:
+    Returns the given team.
+
+    create:
+    Creates a new team instance.
+
+    update:
+    Updates a given team.
+
+    partial_update:
+    Updates a given team.
+
+    destroy:
+    Removes the given team.
+    """
+    pagination_class = CustomPagePagination
+    permission_classes = (DRYPermissions,)
+    queryset = Team.objects.all()
+    serializer_class = TeamSerializer
+    filter_backends = [filters.DjangoFilterBackend]
+
+
 class CalculateSeason(APIView):
     permission_classes = [IsAuthenticated]
+    @swagger_auto_schema(request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'season': openapi.Schema(type=openapi.TYPE_INTEGER, description='Season id'),
+        }))
 
     def post(self, request):
         try:

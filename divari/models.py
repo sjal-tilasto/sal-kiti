@@ -53,6 +53,7 @@ class Season(models.Model):
     start_level_recurve = models.SmallIntegerField(_('Recurve start level'))
     start_level_compound = models.SmallIntegerField(_('Compound start level'))
     start_level_barebow = models.SmallIntegerField(_('Barebow start level'))
+    start_level_longbow = models.SmallIntegerField(_('Longbow start level'))
 
     def __str__(self):
         return '%s, %s - %s' % (self.name, self.date_start, self.date_end)
@@ -91,7 +92,8 @@ class Team(models.Model):
     """Stores a single team."""
     BOW_TYPE_CHOICES = (('recurve', _('Recurve')),
                         ('compound', _('Compound')),
-                        ('barebow', _('Barebow/Longbow')))
+                        ('barebow', _('Barebow')),
+                        ('longbow', _('Longbow')))
     bow_type = models.CharField(_('Bow type'), max_length=8, choices=BOW_TYPE_CHOICES,
                                 default='recurve')
     organization = models.ForeignKey(Organization, related_name='divari_team', on_delete=models.CASCADE)
@@ -105,6 +107,31 @@ class Team(models.Model):
     class Meta:
         verbose_name = _('Team')
         verbose_name_plural = _('Teams')
+
+    @staticmethod
+    def has_read_permission(request):
+        return True
+
+    def has_object_read_permission(self, request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_write_permission(request):
+        return False
+
+    @allow_staff_or_superuser
+    def has_object_write_permission(self, request):
+        return False
+
+    @allow_staff_or_superuser
+    def has_object_update_permission(self, request):
+        return False
+
+    @staticmethod
+    @allow_staff_or_superuser
+    def has_create_permission(request):
+        return False
 
 
 class TeamResult(models.Model):
@@ -165,7 +192,8 @@ class Result(models.Model):
     competition = models.ForeignKey(Competition, on_delete=models.CASCADE)
     BOW_TYPE_CHOICES = (('recurve', _('Recurve')),
                         ('compound', _('Compound')),
-                        ('barebow', _('Barebow/Longbow')))
+                        ('barebow', _('Barebow')),
+                        ('longbow', _('Longbow')))
     bow_type = models.CharField(_('Bow type'), max_length=8, choices=BOW_TYPE_CHOICES,
                                 default='recurve')
     TARGET_CHOICES = (('40', '40 cm'),

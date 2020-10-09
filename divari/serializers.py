@@ -26,6 +26,7 @@ class CompetitionSerializer(serializers.ModelSerializer):
         model = Competition
         fields = (
             'id', 'organization', 'date', 'permissions')
+        ref_name = 'DivariCompetitionSerializer'
 
     def validate(self, data):
         """
@@ -70,6 +71,7 @@ class ResultSerializer(serializers.ModelSerializer):
                 fields=['competition', 'bow_type', 'target_type', 'athlete']
             )
         ]
+        ref_name = 'DivariResultSerializer'
 
     def validate_result(self, value):
         if value < 0 or value > 600:
@@ -105,6 +107,7 @@ class SeasonSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'name', 'date_start', 'date_end', 'result_count', 'start_level_recurve', 'start_level_compound',
             'start_level_barebow', 'permissions')
+        ref_name = 'DivariSeasonSerializer'
 
 
 class TeamSerializer(serializers.ModelSerializer):
@@ -120,6 +123,7 @@ class TeamSerializer(serializers.ModelSerializer):
         model = Team
         fields = (
             'id', 'bow_type', 'organization', 'number', 'division', 'season')
+        ref_name = 'DivariTeamSerializer'
 
 
 class SeasonResultSerializer(serializers.ModelSerializer):
@@ -132,3 +136,4 @@ class SeasonResultSerializer(serializers.ModelSerializer):
         model = SeasonResult
         fields = (
             'id', 'team', 'result')
+        ref_name = 'DivariSeasonResultSerializer'

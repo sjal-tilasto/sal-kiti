@@ -1,7 +1,7 @@
 """
 Calculate divari results
 
-usage: ./manage.py approverecords
+usage: ./manage.py divaricalculation
 """
 import datetime
 
@@ -13,7 +13,7 @@ from divari.utils import calculate_season_results
 class Command(BaseCommand):
     """Calculate divari results"""
     args = 'None'
-    help = 'Approve records'
+    help = 'Calculate Divari season results.'
 
     def add_arguments(self, parser):
         parser.add_argument('--date',
