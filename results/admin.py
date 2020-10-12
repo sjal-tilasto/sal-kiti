@@ -64,7 +64,7 @@ admin.site.register(Category, CategoryAdmin)
 class CategoryForCompetitionTypeAdmin(admin.ModelAdmin):
     autocomplete_fields = ['category', 'type']
     list_display = ['category', 'type', 'max_result', 'min_result']
-    search_fields = ['category', 'type']
+    search_fields = ['category__abbreviation', 'category__name', 'type__abbreviation', 'type__name']
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
