@@ -38,6 +38,7 @@ def calculate_team_results(competition, season):
                 TeamResult.objects.create(competition=competition, team=team, result=cumulative_result)
                 count = 0
                 cumulative_result = 0
+                team_number += 1
 
 
 def calculate_season_results(season):
