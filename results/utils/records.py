@@ -120,7 +120,9 @@ def _create_record(result, record_level, category):
     try:
         Record.objects.get_or_create(result=result, level=record_level,
                                      type=result.competition.type, category=category,
-                                     date_start=result.competition.date_start)
+                                     date_start=result.competition.date_start,
+                                     partial_result=None,
+                                     date_end=None)
         Record.objects.filter(approved=False,
                               result__result__lt=result.result,
                               partial_result=None,
@@ -147,7 +149,7 @@ def _create_record_partial(partial, record_level, category):
     try:
         Record.objects.get_or_create(result=partial.result, partial_result=partial, level=record_level,
                                      type=partial.result.competition.type, category=category,
-                                     date_start=partial.result.competition.date_start)
+                                     date_start=partial.result.competition.date_start, date_end=None)
         Record.objects.filter(approved=False,
                               partial_result__value__lt=partial.value,
                               partial_result__type=partial.type,
@@ -193,7 +195,10 @@ def check_team_records(result, categories):
                 if not Record.objects.filter(Q(result__result__gte=result.result,
                                                date_start__lt=result.competition.date_start) |
                                              Q(result__result__gt=result.result,
-                                               date_start=result.competition.date_start),
+                                               date_start=result.competition.date_start) |
+                                             Q(result__result=result.result,
+                                               result__team_members__in=result.team_members.all(),
+                                               result__organization=result.organization),
                                              level=record_level, type=result.competition.type, date_end=None,
                                              historical=False, category=category, partial_result=None):
                     _create_record(result, record_level, category)
@@ -230,7 +235,8 @@ def check_personal_records(result, categories):
                 if not Record.objects.filter(Q(result__result__gte=result.result,
                                                date_start__lt=result.competition.date_start) |
                                              Q(result__result__gt=result.result,
-                                               date_start=result.competition.date_start),
+                                               date_start=result.competition.date_start) |
+                                             Q(result__result=result.result, result__athlete=result.athlete),
                                              level=record_level, type=result.competition.type, date_end=None,
                                              historical=False, category=category, partial_result=None):
                     _create_record(result, record_level, category)
@@ -284,7 +290,9 @@ def check_records_partial(partial):
                     if not Record.objects.filter(Q(partial_result__value__gte=partial.value,
                                                    date_start__lt=partial.result.competition.date_start) |
                                                  Q(partial_result__value__gt=partial.value,
-                                                   date_start=partial.result.competition.date_start),
+                                                   date_start=partial.result.competition.date_start) |
+                                                 Q(partial_result__value=partial.value,
+                                                   result__athlete=partial.result.athlete),
                                                  level=record_level, type=partial.result.competition.type,
                                                  date_end=None, partial_result__type=partial.type, historical=False,
                                                  category=category).exclude(partial_result=None):
