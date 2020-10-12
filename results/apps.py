@@ -6,3 +6,4 @@ class ResultsConfig(AppConfig):
 
     def ready(self):
         import results.signals
+        import divari.signals
